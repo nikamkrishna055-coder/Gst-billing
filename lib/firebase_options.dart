@@ -25,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -47,30 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC16CXxOYj_dcbFdifWUnJGl3n1IhutuDw',
-    appId: '1:1045577090721:android:c54ca0d1329e8c6359d2e0',
-    messagingSenderId: '1045577090721',
-    projectId: 'rohandb-58168',
-    storageBucket: 'rohandb-58168.firebasestorage.app',
+    apiKey: 'AIzaSyDpD_3BhsthqrrU-9kjTg5uo8HoKGB34fU',
+    appId: '1:217095734613:android:72594861525a630bd85bdc',
+    messagingSenderId: '217095734613',
+    projectId: 'gstproject-9b3bb',
+    storageBucket: 'gstproject-9b3bb.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAZD6GTnCmVvD5Q8HowqIoJkl-xOjXycG4',
-    appId: '1:1045577090721:ios:e62f0faedd64acf459d2e0',
-    messagingSenderId: '1045577090721',
-    projectId: 'rohandb-58168',
-    storageBucket: 'rohandb-58168.firebasestorage.app',
+    apiKey: 'AIzaSyBwzjKJDL-D12imIaEVJLTf53crYWh4f78',
+    appId: '1:217095734613:ios:831e68bb720fb721d85bdc',
+    messagingSenderId: '217095734613',
+    projectId: 'gstproject-9b3bb',
+    storageBucket: 'gstproject-9b3bb.firebasestorage.app',
     iosBundleId: 'com.example.myFirstApp',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAb1V35iCoe2QE6UkSiDBbP0STqqFlie5I',
-    appId: '1:1045577090721:web:d3d5927569e571e159d2e0',
-    messagingSenderId: '1045577090721',
-    projectId: 'rohandb-58168',
-    authDomain: 'rohandb-58168.firebaseapp.com',
-    storageBucket: 'rohandb-58168.firebasestorage.app',
-    measurementId: 'G-RMJDH0HRJC',
+    apiKey: 'AIzaSyAzsGW3K_UUd43UBGxm_G007dlHKv5L7TQ',
+    appId: '1:217095734613:web:6a14bdaab349ccb9d85bdc',
+    messagingSenderId: '217095734613',
+    projectId: 'gstproject-9b3bb',
+    authDomain: 'gstproject-9b3bb.firebaseapp.com',
+    storageBucket: 'gstproject-9b3bb.firebasestorage.app',
+    measurementId: 'G-6JH7P05WX1',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBwzjKJDL-D12imIaEVJLTf53crYWh4f78',
+    appId: '1:217095734613:ios:831e68bb720fb721d85bdc',
+    messagingSenderId: '217095734613',
+    projectId: 'gstproject-9b3bb',
+    storageBucket: 'gstproject-9b3bb.firebasestorage.app',
+    iosBundleId: 'com.example.myFirstApp',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAzsGW3K_UUd43UBGxm_G007dlHKv5L7TQ',
+    appId: '1:217095734613:web:888c093c2a81920fd85bdc',
+    messagingSenderId: '217095734613',
+    projectId: 'gstproject-9b3bb',
+    authDomain: 'gstproject-9b3bb.firebaseapp.com',
+    storageBucket: 'gstproject-9b3bb.firebasestorage.app',
+    measurementId: 'G-TFMYEVP05P',
   );
 
 }
