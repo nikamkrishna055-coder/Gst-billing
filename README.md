@@ -1,4 +1,4 @@
-# GST Billing SaaS App
+# GST Billing App
 
 Smart GST billing and business operations app built with Flutter + Firebase.
 
@@ -10,7 +10,7 @@ Smart GST billing and business operations app built with Flutter + Firebase.
 
 ## Why This Project
 
-This app is designed as a mini SaaS billing system, not a UI-only prototype.
+This app is designed as a mini   billing system, not a UI-only prototype.
 It supports secure multi-user access, multi-company data isolation, recurring billing, GST calculations, and live financial reporting.
 
 ## Core Features
