@@ -22,7 +22,10 @@ class ClientTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color badgeColor = isActive ? Colors.green : Colors.orange;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final Color badgeColor = isActive
+        ? colorScheme.tertiary
+        : colorScheme.secondary; // Green/Orange
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
@@ -63,9 +66,10 @@ class ClientTile extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 3),
@@ -73,7 +77,9 @@ class ClientTile extends StatelessWidget {
                       email,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Container(

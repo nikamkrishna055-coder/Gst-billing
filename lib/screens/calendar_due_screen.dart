@@ -132,6 +132,9 @@ class _CalendarDueScreenState extends State<CalendarDueScreen> {
           ),
           calendarStyle: CalendarStyle(
             outsideDaysVisible: false,
+            defaultTextStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             weekendTextStyle: TextStyle(
               color: Theme.of(context).colorScheme.error,
             ),
@@ -154,8 +157,12 @@ class _CalendarDueScreenState extends State<CalendarDueScreen> {
             ),
           ),
           daysOfWeekStyle: DaysOfWeekStyle(
-            weekendStyle: const TextStyle(
-              color: Colors.red,
+            weekdayStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.bold,
+            ),
+            weekendStyle: TextStyle(
+              color: Theme.of(context).colorScheme.error,
               fontWeight: FontWeight.bold,
             ),
             decoration: BoxDecoration(
@@ -369,15 +376,16 @@ class _CalendarDueScreenState extends State<CalendarDueScreen> {
   }
 
   Color _eventColor(String type) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final String lowerType = type.toLowerCase();
     if (lowerType.contains('invoice')) {
-      return const Color(0xFFEF4444); // Error red
+      return colorScheme.error; // Error red
     } else if (lowerType.contains('tax') || lowerType.contains('gst')) {
-      return const Color(0xFFF97316); // Orange/warning
+      return colorScheme.secondary; // Orange/warning
     } else if (lowerType.contains('reminder')) {
-      return const Color(0xFFA855F7); // Purple
+      return colorScheme.tertiary; // Purple
     }
-    return const Color(0xFF64748B); // Slate grey
+    return colorScheme.outline; // Grey
   }
 
   IconData _eventIcon(String type) {

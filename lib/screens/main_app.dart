@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/company_record.dart';
+import '../providers/theme_provider.dart';
 import '../services/analytics_service.dart';
 import '../services/auth_service.dart';
 import '../services/firestore_service.dart';
@@ -236,6 +237,29 @@ class _MainAppState extends State<MainApp> {
           icon: const Icon(Icons.menu),
         ),
         actions: <Widget>[
+          // Theme Toggle Button
+          Consumer<ThemeProvider>(
+            builder:
+                (
+                  BuildContext context,
+                  ThemeProvider themeProvider,
+                  Widget? child,
+                ) {
+                  return IconButton(
+                    tooltip: themeProvider.isDarkMode
+                        ? 'Light Mode'
+                        : 'Dark Mode',
+                    onPressed: () async {
+                      await themeProvider.toggleTheme();
+                    },
+                    icon: Icon(
+                      themeProvider.isDarkMode
+                          ? Icons.light_mode_outlined
+                          : Icons.dark_mode_outlined,
+                    ),
+                  );
+                },
+          ),
           _buildCompanySwitcher(),
           IconButton(
             onPressed: () => _pushScreen(const ProfileScreen()),

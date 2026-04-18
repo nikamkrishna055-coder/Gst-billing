@@ -19,28 +19,30 @@ class _RemindersScreenState extends State<RemindersScreen> {
   String _selectedFilter = 'All';
 
   Color _typeColor(String type) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     switch (type.toLowerCase()) {
       case 'gst':
-        return Colors.purple;
+        return colorScheme.tertiary;
       case 'invoice':
-        return Colors.blue;
+        return colorScheme.primary;
       case 'income tax':
-        return Colors.orange;
+        return colorScheme.secondary;
       default:
-        return Colors.blueGrey;
+        return colorScheme.outline;
     }
   }
 
   Color _statusColor(String status) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     switch (status.toLowerCase()) {
       case 'done':
-        return Colors.green;
+        return colorScheme.primary;
       case 'scheduled':
-        return Colors.blue;
+        return colorScheme.secondary;
       case 'pending':
-        return Colors.orange;
+        return colorScheme.error;
       default:
-        return Colors.grey;
+        return colorScheme.outline;
     }
   }
 
@@ -612,27 +614,23 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
-                  gradient: const LinearGradient(
-                    colors: <Color>[Color(0xFF059669), Color(0xFF0D9488)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        const Icon(
+                        Icon(
                           Icons.notifications_active_outlined,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                         const SizedBox(width: 8),
-                        const Expanded(
+                        Expanded(
                           child: Text(
                             'Reminders (Realtime)',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
                             ),
@@ -641,10 +639,12 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         FilledButton.tonalIcon(
                           onPressed: _openAddReminderSheet,
                           style: FilledButton.styleFrom(
-                            backgroundColor: Colors.white.withValues(
-                              alpha: 0.2,
-                            ),
-                            foregroundColor: Colors.white,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary.withValues(alpha: 0.2),
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
                           ),
                           icon: const Icon(Icons.add, size: 18),
                           label: const Text('Add'),
@@ -672,9 +672,13 @@ class _RemindersScreenState extends State<RemindersScreen> {
                             ? null
                             : () => _showPayload(filtered),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary,
                           side: BorderSide(
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary.withValues(alpha: 0.5),
                           ),
                         ),
                         icon: const Icon(Icons.cloud_upload_outlined, size: 18),
@@ -709,6 +713,14 @@ class _RemindersScreenState extends State<RemindersScreen> {
                       child: ChoiceChip(
                         label: Text(filter),
                         selected: _selectedFilter == filter,
+                        selectedColor: Theme.of(context).colorScheme.primary,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
+                        labelStyle: TextStyle(
+                          color: _selectedFilter == filter
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
                         onSelected: (_) {
                           setState(() {
                             _selectedFilter = filter;
@@ -824,14 +836,23 @@ class _RemindersScreenState extends State<RemindersScreen> {
                                             '${reminder.priority} Priority',
                                             reminder.priority.toLowerCase() ==
                                                     'high'
-                                                ? Colors.red
+                                                ? Theme.of(context).colorScheme.error
                                                 : reminder.priority
                                                           .toLowerCase() ==
                                                       'medium'
-                                                ? Colors.orange
-                                                : Colors.green,
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .tertiary,
                                           ),
-                                          _badge(reminder.channel, Colors.teal),
+                                          _badge(
+                                            reminder.channel,
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .outline,
+                                          ),
                                         ],
                                       ),
                                       const SizedBox(height: 8),
@@ -967,19 +988,24 @@ class _RemindersScreenState extends State<RemindersScreen> {
   }
 
   Widget _metric(String label, String value) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final bool isDark = colorScheme.brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white.withValues(alpha: 0.16),
+        color: isDark
+            ? colorScheme.primary.withValues(alpha: 0.2) // Proper dark mode
+            : colorScheme.primary.withValues(alpha: 0.08), // Light mode
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: isDark ? Colors.white : colorScheme.primary,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -987,7 +1013,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.9),
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.85)
+                  : colorScheme.primary.withValues(alpha: 0.7),
               fontSize: 11,
             ),
           ),

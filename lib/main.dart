@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
+import 'providers/theme_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_app.dart';
 import 'services/analytics_service.dart';
@@ -15,7 +16,6 @@ import 'theme/app_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  AppTheme.setDarkMode(true); // 👈 dark mode by default
   runApp(const MyApp());
 }
 
@@ -26,6 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // Theme Provider
+        ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()),
+        // Other providers
         Provider<AuthService>(create: (_) => AuthService()),
         Provider<FirestoreService>(
           create: (BuildContext context) =>
@@ -47,18 +50,18 @@ class SmartTaxInvoiceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: AppTheme.themeModeNotifier,
-      builder: (BuildContext context, ThemeMode mode, Widget? child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Smart Tax & Invoice Manager',
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: mode,
-          home: const AuthGate(),
-        );
-      },
+    return Consumer<ThemeProvider>(
+      builder:
+          (BuildContext context, ThemeProvider themeProvider, Widget? child) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Smart Tax & Invoice Manager',
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeProvider.themeMode,
+              home: const AuthGate(),
+            );
+          },
     );
   }
 }

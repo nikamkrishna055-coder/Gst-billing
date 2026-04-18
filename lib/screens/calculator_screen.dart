@@ -661,9 +661,12 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
     return Scaffold(
       backgroundColor: lightBackground,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Advanced GST Calculator',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
       body: content,
@@ -672,28 +675,48 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
 
   Widget _buildCalculatorCard() {
     return Card(
+      elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'Advanced Calculator',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.calculate_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Calculator',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 18),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: const LinearGradient(
-                  colors: <Color>[Color(0xFF1E2A45), Color(0xFF132036)],
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+                gradient: LinearGradient(
+                  colors: Theme.of(context).brightness == Brightness.dark
+                      ? const <Color>[Color(0xFF1E293B), Color(0xFF0F172A)]
+                      : const <Color>[Color(0xFF2F6FED), Color(0xFF3B82F6)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -705,16 +728,26 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
                     _displayExpression,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    style: TextStyle(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onPrimary
+                          .withValues(alpha: 0.75),
+                      fontSize: 14,
+                      letterSpacing: 0.3,
+                    ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 14),
                   AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 220),
+                    duration: const Duration(milliseconds: 300),
                     transitionBuilder:
                         (Widget child, Animation<double> animation) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
+                          return ScaleTransition(
+                            scale: animation,
+                            child: FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            ),
                           );
                         },
                     child: Text(
@@ -722,17 +755,18 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
                       key: ValueKey<String>(_result),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: 48,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.5,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 20),
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -765,15 +799,24 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
 
   Widget _buildModeSwitch() {
     return Card(
+      elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(14),
         child: Row(
           children: <Widget>[
             Expanded(
               child: ChoiceChip(
                 label: const Text('Normal Calculator'),
                 selected: _calculatorMode == CalculatorMode.normal,
+                selectedColor: Theme.of(context).colorScheme.primary,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                labelStyle: TextStyle(
+                  color: _calculatorMode == CalculatorMode.normal
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
                 onSelected: (_) {
                   setState(() {
                     _calculatorMode = CalculatorMode.normal;
@@ -786,6 +829,14 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
               child: ChoiceChip(
                 label: const Text('GST Billing Mode'),
                 selected: _calculatorMode == CalculatorMode.gstBilling,
+                selectedColor: Theme.of(context).colorScheme.primary,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                labelStyle: TextStyle(
+                  color: _calculatorMode == CalculatorMode.gstBilling
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
                 onSelected: (_) {
                   setState(() {
                     _calculatorMode = CalculatorMode.gstBilling;
@@ -810,13 +861,23 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
         : 'Expression: $_displayExpression';
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 260),
+      duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          colors: <Color>[Color(0xFF2F6FED), Color(0xFF3B82F6)],
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+        gradient: LinearGradient(
+          colors: <Color>[
+            Theme.of(context).colorScheme.secondary,
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.7),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -824,28 +885,49 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
+          Row(
+            children: <Widget>[
+              Icon(
+                gstMode ? Icons.receipt_long_outlined : Icons.calculate,
+                color: Theme.of(context).colorScheme.onSecondary,
+                size: 24,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSecondary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.w800,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSecondary,
+              fontSize: 40,
+              fontWeight: FontWeight.w900,
+              letterSpacing: -1,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
+          Container(
+            height: 1,
+            color: Theme.of(context).colorScheme.onSecondary.withValues(alpha: 0.2),
+          ),
+          const SizedBox(height: 8),
           Text(
             subtitle,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.88),
-              fontSize: 12,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSecondary
+                  .withValues(alpha: 0.85),
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -855,21 +937,32 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
 
   Widget _buildProfitMarginPanel() {
     return Card(
+      elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'Profit Margin Calculator',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.trending_up_outlined,
+                  color: Theme.of(context).colorScheme.tertiary,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Profit Margin',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 18),
             Row(
               children: <Widget>[
                 Expanded(
@@ -895,18 +988,20 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
             _buildAmountRow(
               'Profit Amount',
               _profitAmount,
-              valueColor: _profitAmount >= 0 ? Colors.green : Colors.red,
+              valueColor: _profitAmount >= 0
+                  ? Theme.of(context).colorScheme.tertiary
+                  : Theme.of(context).colorScheme.error,
             ),
             _buildAmountRow(
               'Profit %',
               _profitPercent,
-              valueColor: Colors.green.shade700,
+              valueColor: Theme.of(context).colorScheme.tertiary,
               suffix: '%',
             ),
             _buildAmountRow(
               'Margin %',
               _marginPercent,
-              valueColor: Colors.blue.shade700,
+              valueColor: Theme.of(context).colorScheme.primary,
               suffix: '%',
             ),
           ],
@@ -921,29 +1016,43 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
 
     switch (type) {
       case _CalculatorKeyType.number:
-        return _KeyStyle(
-          isDark ? colorScheme.surface : whiteCard,
-          colorScheme.onSurface,
-        );
+        // Number buttons: surface color with high contrast text
+        return _KeyStyle(colorScheme.surface, colorScheme.onSurface);
       case _CalculatorKeyType.operatorKey:
-        return _KeyStyle(primaryBlue.withValues(alpha: 0.12), primaryBlue);
-      case _CalculatorKeyType.utility:
+        // Operator buttons: FULL STRENGTH in dark mode, lighter in light mode
         return _KeyStyle(
-          Colors.red.withValues(alpha: 0.10),
-          Colors.red.shade700,
+          isDark
+              ? colorScheme.secondary // FULL STRENGTH in dark mode
+              : colorScheme.secondary.withValues(alpha: 0.3),
+          isDark ? Colors.white : colorScheme.secondary, // Dark text in light mode
+        );
+      case _CalculatorKeyType.utility:
+        // Utility (C) button: error color with white text
+        return _KeyStyle(
+          isDark
+              ? colorScheme.error // FULL STRENGTH in dark mode
+              : colorScheme.error.withValues(alpha: 0.3),
+          isDark ? Colors.white : colorScheme.error, // Dark text in light mode
         );
       case _CalculatorKeyType.memory:
+        // Memory buttons: FULL STRENGTH in dark mode, lighter in light mode
         return _KeyStyle(
-          Colors.grey.withValues(alpha: 0.15),
-          Colors.blueGrey.shade700,
+          isDark
+              ? colorScheme.secondary // FULL STRENGTH in dark mode
+              : colorScheme.secondary.withValues(alpha: 0.5),
+          isDark ? Colors.white : colorScheme.secondary, // Dark text in light mode
         );
       case _CalculatorKeyType.special:
+        // Special keys: FULL STRENGTH in dark mode, lighter in light mode
         return _KeyStyle(
-          Colors.orange.withValues(alpha: 0.14),
-          Colors.orange.shade800,
+          isDark
+              ? colorScheme.tertiary // FULL STRENGTH in dark mode
+              : colorScheme.tertiary.withValues(alpha: 0.3),
+          isDark ? Colors.white : colorScheme.tertiary, // Dark text in light mode
         );
       case _CalculatorKeyType.equals:
-        return const _KeyStyle(primaryBlue, Colors.white);
+        // Equals button: primary background with white text (max contrast)
+        return _KeyStyle(colorScheme.primary, Colors.white);
       case _CalculatorKeyType.empty:
         return const _KeyStyle(Colors.transparent, Colors.transparent);
     }
@@ -951,30 +1060,42 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
 
   Widget _buildSmartBillingPanel() {
     return Card(
+      elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'Smart GST Billing Panel',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+            Row(
+              children: <Widget>[
+                Icon(
+                  Icons.receipt_outlined,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Smart GST Billing',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
-              'Client-ready billing simulation with GST split and payable total.',
+              'Client-ready billing with GST split & totals',
               style: TextStyle(
                 color: Theme.of(
                   context,
-                ).colorScheme.onSurface.withValues(alpha: 0.7),
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                fontSize: 13,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Row(
               children: <Widget>[
                 Expanded(
@@ -1018,15 +1139,20 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 20),
+            Divider(
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+            ),
             const SizedBox(height: 18),
             Text(
-              'GST Percentage',
+              'GST Rate',
               style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             Wrap(
               spacing: 10,
               runSpacing: 10,
@@ -1038,15 +1164,20 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
                 _buildRateChip(28),
               ],
             ),
+            const SizedBox(height: 20),
+            Divider(
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+            ),
             const SizedBox(height: 18),
             Text(
               'GST Type',
               style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             Row(
               children: <Widget>[
                 Expanded(
@@ -1122,7 +1253,9 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
               duration: const Duration(milliseconds: 240),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                // FIX 3: was Colors.white — hardcoded white breaks dark mode
+                // and causes invisible white-on-white text in output rows.
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: greyDivider),
                 boxShadow: const <BoxShadow>[
@@ -1149,35 +1282,35 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
                   _buildAmountRow(
                     'Discount amount',
                     -_discountAmount,
-                    valueColor: Colors.red.shade700,
+                    valueColor: Theme.of(context).colorScheme.error,
                   ),
                   _buildAmountRow(
                     'Markup amount',
                     _markupAmount,
-                    valueColor: Colors.green.shade700,
+                    valueColor: Theme.of(context).colorScheme.tertiary,
                   ),
                   _buildAmountRow(
                     'GST amount',
                     _gstAmount,
-                    valueColor: Colors.orange.shade700,
+                    valueColor: Theme.of(context).colorScheme.secondary,
                   ),
                   if (_selectedGstType == GstType.cgstSgst) ...<Widget>[
                     _buildAmountRow(
                       'CGST amount',
                       _cgstAmount,
-                      valueColor: Colors.orange.shade800,
+                      valueColor: Theme.of(context).colorScheme.secondary,
                     ),
                     _buildAmountRow(
                       'SGST amount',
                       _sgstAmount,
-                      valueColor: Colors.orange.shade800,
+                      valueColor: Theme.of(context).colorScheme.secondary,
                     ),
                   ],
                   if (_selectedGstType == GstType.igst)
                     _buildAmountRow(
                       'IGST amount',
                       _igstAmount,
-                      valueColor: Colors.green.shade700,
+                      valueColor: Theme.of(context).colorScheme.tertiary,
                     ),
                   const Divider(height: 22, thickness: 1),
                   _buildAmountRow(
@@ -1230,8 +1363,12 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: selected ? primaryBlue : greyDivider),
       ),
+      // FIX 1: wrapped assignment in setState so Flutter marks
+      // the widget dirty and schedules a rebuild with the new rate.
       onSelected: (_) {
-        _selectedGstRate = rate;
+        setState(() {
+          _selectedGstRate = rate;
+        });
         _recalculateBilling();
       },
     );
@@ -1245,8 +1382,12 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
     final bool selected = _selectedGstType == type;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
+      // FIX 2: wrapped assignment in setState so the badge visually
+      // updates and _recalculateBilling reads the correct new type.
       onTap: () {
-        _selectedGstType = type;
+        setState(() {
+          _selectedGstType = type;
+        });
         _recalculateBilling();
       },
       child: AnimatedContainer(
@@ -1254,7 +1395,11 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: selected ? color.withValues(alpha: 0.16) : Colors.white,
+          // FIX 3 (partial): replaced Colors.white with colorScheme.surface
+          // so unselected badges also render correctly in dark mode.
+          color: selected
+              ? color.withValues(alpha: 0.16)
+              : Theme.of(context).colorScheme.surface,
           border: Border.all(
             color: selected ? color : greyDivider,
             width: selected ? 1.8 : 1,
@@ -1265,7 +1410,7 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: selected ? color : Colors.black87,
+              color: selected ? color : Theme.of(context).colorScheme.onSurface,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -1487,6 +1632,9 @@ class _KeyButtonState extends State<_KeyButton> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final bool isDark = colorScheme.brightness == Brightness.dark;
+
     return AnimatedScale(
       scale: _pressed ? 0.95 : 1,
       duration: const Duration(milliseconds: 110),
@@ -1497,8 +1645,8 @@ class _KeyButtonState extends State<_KeyButton> {
             color: widget.backgroundColor,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: widget.backgroundColor == whiteCard
-                  ? greyDivider
+              color: widget.backgroundColor.computeLuminance() > 0.5
+                  ? colorScheme.outline.withValues(alpha: 0.3)
                   : Colors.transparent,
             ),
           ),

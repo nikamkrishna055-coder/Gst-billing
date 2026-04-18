@@ -24,23 +24,25 @@ class InvoiceTile extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onDownload;
 
-  Color _badgeColor() {
+  Color _badgeColor(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     switch (status.toLowerCase()) {
       case 'paid':
-        return Colors.green;
+        return colorScheme.tertiary; // Green
       case 'pending':
-        return Colors.orange;
+        return colorScheme.secondary; // Orange
       case 'overdue':
-        return Colors.red;
+        return colorScheme.error; // Red
       default:
-        return Colors.blueGrey;
+        return colorScheme.outline;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final Color badge = _badgeColor();
+    final Color badge = _badgeColor(context);
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -85,13 +87,20 @@ class InvoiceTile extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       invoiceNo,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 3),
-                    Text(clientName),
+                    Text(
+                      clientName,
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontSize: 14,
+                      ),
+                    ),
                     if (dateLabel != null) ...<Widget>[
                       const SizedBox(height: 4),
                       Text(
@@ -116,12 +125,14 @@ class InvoiceTile extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
-                              color: primaryBlue.withValues(alpha: 0.10),
+                              color: colorScheme.primary.withValues(
+                                alpha: 0.10,
+                              ),
                             ),
                             child: Text(
                               '#$tag',
-                              style: const TextStyle(
-                                color: primaryBlue,
+                              style: TextStyle(
+                                color: colorScheme.primary,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -139,9 +150,10 @@ class InvoiceTile extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     amount,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w800,
                       fontSize: 14,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 6),
