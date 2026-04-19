@@ -58,12 +58,9 @@ class _ActionCardState extends State<ActionCard> {
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
-                mainAxisAlignment: widget.centerContent
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.start,
-                crossAxisAlignment: widget.centerContent
-                    ? CrossAxisAlignment.center
-                    : CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
                     padding: const EdgeInsets.all(8),
@@ -75,28 +72,33 @@ class _ActionCardState extends State<ActionCard> {
                     ),
                     child: Icon(widget.icon, color: widget.accentColor),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    widget.title,
-                    textAlign: widget.centerContent
-                        ? TextAlign.center
-                        : TextAlign.start,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
+                  const SizedBox(height: 10),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        widget.title,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.subtitle,
-                    textAlign: widget.centerContent
-                        ? TextAlign.center
-                        : TextAlign.start,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.color?.withValues(alpha: 0.75),
+                  const SizedBox(height: 6),
+                  Flexible(
+                    child: Text(
+                      widget.subtitle,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.color?.withValues(alpha: 0.75),
+                      ),
                     ),
                   ),
                 ],

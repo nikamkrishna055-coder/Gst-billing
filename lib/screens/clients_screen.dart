@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -59,9 +57,6 @@ class _ClientsScreenState extends State<ClientsScreen> {
     if (client != null) {
       gstinController.text = client.gstin;
     }
-    final TextEditingController stateController = TextEditingController(
-      text: client?.segment ?? 'Corporate',
-    );
     final TextEditingController creditLimitController = TextEditingController(
       text: client?.creditLimit.toStringAsFixed(0) ?? '100000',
     );
@@ -71,300 +66,247 @@ class _ClientsScreenState extends State<ClientsScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Container(
-          margin: const EdgeInsets.only(top: 22),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: SafeArea(
-            top: false,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(
-                16,
-                16,
-                16,
-                MediaQuery.of(context).viewInsets.bottom + 16,
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            String selectedSegment = client?.segment ?? 'Corporate';
+
+            return Container(
+              margin: const EdgeInsets.only(top: 22),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
               ),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Center(
-                      child: Container(
-                        width: 42,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).dividerColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      client == null ? 'Add Client' : 'Edit Client',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Saved in users/{uid}/clients',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    const SizedBox(height: 14),
-                    TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        prefixIcon: Icon(Icons.person_outline),
-                      ),
-                      validator: (String? value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Enter name';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
+              child: SafeArea(
+                top: false,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    16,
+                    16,
+                    MediaQuery.of(context).viewInsets.bottom + 16,
+                  ),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            controller: phoneController,
-                            keyboardType: TextInputType.phone,
-                            decoration: const InputDecoration(
-                              labelText: 'Phone',
-                              prefixIcon: Icon(Icons.phone_outlined),
+                        Center(
+                          child: Container(
+                            width: 42,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).dividerColor,
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            validator: (String? value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Enter phone';
-                              }
-                              return null;
-                            },
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextFormField(
-                            controller: emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: const InputDecoration(
-                              labelText: 'Email',
-                              prefixIcon: Icon(Icons.email_outlined),
-                            ),
-                            validator: (String? value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Enter email';
+                        const SizedBox(height: 14),
+                        Text(
+                          client == null ? 'Add Client' : 'Edit Client',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Saved in users/{uid}/clients',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 14),
+                        TextFormField(
+                          controller: nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Name',
+                            prefixIcon: Icon(Icons.person_outline),
+                          ),
+                          validator: (String? value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Enter name';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: phoneController,
+                          keyboardType: TextInputType.phone,
+                          decoration: const InputDecoration(
+                            labelText: 'Phone',
+                            prefixIcon: Icon(Icons.phone_outlined),
+                          ),
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Enter phone number';
+                            }
+                            if (!RegExp(r'^[0-9]{10}$').hasMatch(value)) {
+                              return 'Enter valid 10-digit phone number';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                            prefixIcon: Icon(Icons.email_outlined),
+                          ),
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Enter email';
+                            }
+                            if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                              return 'Enter valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: addressController,
+                          decoration: const InputDecoration(
+                            labelText: 'Address',
+                            prefixIcon: Icon(Icons.location_on_outlined),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: gstinController,
+                          decoration: const InputDecoration(
+                            labelText: 'GSTIN',
+                            prefixIcon: Icon(Icons.badge_outlined),
+                          ),
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Enter GSTIN';
+                            }
+                            if (value.length != 15) {
+                              return 'GSTIN must be 15 characters';
+                            }
+                            if (!RegExp(r'^[0-9A-Z]{15}$').hasMatch(value)) {
+                              return 'Invalid GSTIN format';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        DropdownButtonFormField<String>(
+                          value: selectedSegment,
+                          items: <String>['Retail', 'Wholesale', 'Corporate']
+                              .map((String e) => DropdownMenuItem<String>(
+                                    value: e,
+                                    child: Text(e),
+                                  ))
+                              .toList(),
+                          onChanged: (String? value) {
+                            if (value != null) {
+                              setState(() {
+                                selectedSegment = value;
+                              });
+                            }
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Segment',
+                            prefixIcon: Icon(Icons.category_outlined),
+                          ),
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Select segment';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: creditLimitController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'Credit Limit',
+                            prefixIcon: Icon(Icons.account_balance_wallet_outlined),
+                          ),
+                          validator: (String? value) {
+                            final double amount =
+                                double.tryParse(value?.trim() ?? '') ?? -1;
+                            if (amount < 0) {
+                              return 'Invalid credit limit';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              if (!formKey.currentState!.validate()) {
+                                return;
                               }
-                              return null;
+                              final FirestoreService firestoreService = context
+                                  .read<FirestoreService>();
+                              final AnalyticsService analyticsService = context
+                                  .read<AnalyticsService>();
+                              final NavigatorState navigator = Navigator.of(
+                                context,
+                              );
+                              final double creditLimit =
+                                  double.tryParse(
+                                    creditLimitController.text.trim(),
+                                  ) ??
+                                  0;
+                              try {
+                                if (client == null) {
+                                  await firestoreService.addClient(
+                                    name: nameController.text.trim(),
+                                    phone: phoneController.text.trim(),
+                                    email: emailController.text.trim(),
+                                    address: addressController.text.trim(),
+                                    gstin: gstinController.text.trim(),
+                                    state: selectedSegment,
+                                    creditLimit: creditLimit,
+                                  );
+                                  await analyticsService.logEvent('add_client');
+                                } else {
+                                  await firestoreService.updateClient(
+                                    clientId: client.id,
+                                    name: nameController.text.trim(),
+                                    phone: phoneController.text.trim(),
+                                    email: emailController.text.trim(),
+                                    address: addressController.text.trim(),
+                                    gstin: gstinController.text.trim(),
+                                    state: selectedSegment,
+                                    creditLimit: creditLimit,
+                                  );
+                                  await analyticsService.logEvent('edit_client');
+                                }
+                                if (!mounted) {
+                                  return;
+                                }
+                                navigator.pop();
+                                _showMessage(
+                                  client == null
+                                      ? 'Client saved to Firestore.'
+                                      : 'Client updated.',
+                                );
+                              } catch (error) {
+                                _showMessage('Could not save client: $error');
+                              }
                             },
+                            icon: const Icon(Icons.person_add_alt_1),
+                            label: Text(
+                              client == null ? 'Save Client' : 'Update Client',
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: addressController,
-                      decoration: const InputDecoration(
-                        labelText: 'Address',
-                        prefixIcon: Icon(Icons.location_on_outlined),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: TextFormField(
-                            controller: gstinController,
-                            decoration: const InputDecoration(
-                              labelText: 'GSTIN',
-                              prefixIcon: Icon(Icons.badge_outlined),
-                            ),
-                            validator: (String? value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Enter GSTIN';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextFormField(
-                            controller: stateController,
-                            decoration: const InputDecoration(
-                              labelText: 'State/Segment',
-                              prefixIcon: Icon(Icons.map_outlined),
-                            ),
-                            validator: (String? value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Enter state';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: creditLimitController,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: const InputDecoration(
-                        labelText: 'Credit Limit',
-                        prefixIcon: Icon(Icons.account_balance_wallet_outlined),
-                      ),
-                      validator: (String? value) {
-                        final double amount =
-                            double.tryParse(value?.trim() ?? '') ?? -1;
-                        if (amount < 0) {
-                          return 'Invalid credit limit';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 14),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          if (!formKey.currentState!.validate()) {
-                            return;
-                          }
-                          final FirestoreService firestoreService = context
-                              .read<FirestoreService>();
-                          final AnalyticsService analyticsService = context
-                              .read<AnalyticsService>();
-                          final NavigatorState navigator = Navigator.of(
-                            context,
-                          );
-                          final double creditLimit =
-                              double.tryParse(
-                                creditLimitController.text.trim(),
-                              ) ??
-                              0;
-                          try {
-                            if (client == null) {
-                              await firestoreService.addClient(
-                                name: nameController.text.trim(),
-                                phone: phoneController.text.trim(),
-                                email: emailController.text.trim(),
-                                address: addressController.text.trim(),
-                                gstin: gstinController.text.trim(),
-                                state: stateController.text.trim(),
-                                creditLimit: creditLimit,
-                              );
-                              await analyticsService.logEvent('add_client');
-                            } else {
-                              await firestoreService.updateClient(
-                                clientId: client.id,
-                                name: nameController.text.trim(),
-                                phone: phoneController.text.trim(),
-                                email: emailController.text.trim(),
-                                address: addressController.text.trim(),
-                                gstin: gstinController.text.trim(),
-                                state: stateController.text.trim(),
-                                creditLimit: creditLimit,
-                              );
-                              await analyticsService.logEvent('edit_client');
-                            }
-                            if (!mounted) {
-                              return;
-                            }
-                            navigator.pop();
-                            _showMessage(
-                              client == null
-                                  ? 'Client saved to Firestore.'
-                                  : 'Client updated.',
-                            );
-                          } catch (error) {
-                            _showMessage('Could not save client: $error');
-                          }
-                        },
-                        icon: const Icon(Icons.person_add_alt_1),
-                        label: Text(
-                          client == null ? 'Save Client' : 'Update Client',
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showPayload(List<ClientRecord> clients) {
-    final String payload = const JsonEncoder.withIndent('  ').convert(
-      clients
-          .map(
-            (ClientRecord client) => <String, dynamic>{
-              'id': client.id,
-              ...client.toMap(),
-            },
-          )
-          .toList(),
-    );
-
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          margin: const EdgeInsets.only(top: 22),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Clients Firebase Payload',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: SelectableText(
-                          payload,
-                          style: const TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -488,26 +430,6 @@ class _ClientsScreenState extends State<ClientsScreen> {
                               child: _metric('Pending', _money(totalPending)),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: OutlinedButton.icon(
-                            onPressed: filtered.isEmpty
-                                ? null
-                                : () => _showPayload(filtered),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              side: BorderSide(
-                                color: Colors.white.withValues(alpha: 0.5),
-                              ),
-                            ),
-                            icon: const Icon(
-                              Icons.cloud_upload_outlined,
-                              size: 18,
-                            ),
-                            label: const Text('Payload'),
-                          ),
                         ),
                       ],
                     ),

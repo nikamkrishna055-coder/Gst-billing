@@ -101,58 +101,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
     });
   }
 
-  Future<String> _buildFinancialCsv(FirestoreService firestore) async {
-    final DateTimeRange? range = _activeRange;
-    final DateTime? startDate = range?.start;
-    final DateTime? endDate = range?.end;
-
-    final List<MonthlyRevenuePoint> monthly = await firestore
-        .streamMonthlyRevenueReport(startDate: startDate, endDate: endDate)
-        .first;
-    final GstSummaryRecord gst = await firestore
-        .streamGstSummaryReport(startDate: startDate, endDate: endDate)
-        .first;
-    final List<TopClientRecord> clients = await firestore
-        .streamTopClientsReport(
-          startDate: startDate,
-          endDate: endDate,
-          limit: 25,
-        )
-        .first;
-
-    final StringBuffer csv = StringBuffer();
-    csv.writeln('section,key,value');
-    csv.writeln(
-      'meta,range,${range == null ? 'All Time' : '${range.start.toIso8601String()} to ${range.end.toIso8601String()}'}',
-    );
-
-    for (final MonthlyRevenuePoint point in monthly) {
-      csv.writeln('monthly,${point.monthKey}_total,${point.totalRevenue}');
-      csv.writeln('monthly,${point.monthKey}_paid,${point.paidRevenue}');
-      csv.writeln('monthly,${point.monthKey}_unpaid,${point.unpaidRevenue}');
-      csv.writeln('monthly,${point.monthKey}_growth,${point.growthPercent}');
-    }
-
-    csv.writeln('gst,cgst,${gst.cgst}');
-    csv.writeln('gst,sgst,${gst.sgst}');
-    csv.writeln('gst,igst,${gst.igst}');
-    csv.writeln('gst,totalTax,${gst.totalTax}');
-    csv.writeln('gst,taxableAmount,${gst.taxableAmount}');
-    csv.writeln('gst,taxPayable,${gst.taxPayable}');
-
-    for (final TopClientRecord client in clients) {
-      final String key = client.clientId.isEmpty
-          ? client.clientName
-          : client.clientId;
-      csv.writeln('topClients,${key}_name,${client.clientName}');
-      csv.writeln('topClients,${key}_invoices,${client.invoiceCount}');
-      csv.writeln('topClients,${key}_total,${client.totalAmount}');
-      csv.writeln('topClients,${key}_paid,${client.paidAmount}');
-      csv.writeln('topClients,${key}_unpaid,${client.unpaidAmount}');
-    }
-    return csv.toString();
-  }
-
   @override
   Widget build(BuildContext context) {
     final FirestoreService? firestore = context.read<FirestoreService?>();
@@ -415,37 +363,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   ElevatedButton.icon(
                     onPressed: () async {
                       try {
-                        final String csvContent = await _buildFinancialCsv(
-                          firestore,
-                        );
-                        await downloadCSV(csvContent, 'financial_summary.csv');
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Downloaded successfully!'),
-                              duration: Duration(seconds: 2),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Download failed: $e'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.download_outlined),
-                    label: const Text('Export Financial Summary CSV'),
-                  ),
-                  const SizedBox(height: 8),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      try {
                         final String csvContent = await firestore
                             .exportInvoicesCsv();
                         await downloadCSV(csvContent, 'invoices_export.csv');
@@ -501,36 +418,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     },
                     icon: const Icon(Icons.download_outlined),
                     label: const Text('Export Clients CSV'),
-                  ),
-                  const SizedBox(height: 8),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      try {
-                        final String csvContent = await firestore
-                            .exportRevenueCsv();
-                        await downloadCSV(csvContent, 'revenue_report.csv');
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Downloaded successfully!'),
-                              duration: Duration(seconds: 2),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Download failed: $e'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.download_outlined),
-                    label: const Text('Export Revenue CSV'),
                   ),
                 ],
               ),

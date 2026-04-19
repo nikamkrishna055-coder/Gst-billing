@@ -9,7 +9,6 @@ import '../services/firestore_service.dart';
 import '../services/messaging_service.dart';
 import '../theme/app_theme.dart';
 import 'activity_logs_screen.dart';
-import 'analytics_screen.dart';
 import 'business_profile_screen.dart';
 import 'calendar_due_screen.dart';
 import 'calculator_screen.dart';
@@ -18,7 +17,6 @@ import 'company_management_screen.dart';
 import 'home_screen.dart';
 import 'invoices_screen.dart';
 import 'login_screen.dart';
-import 'products_screen.dart';
 import 'profile_screen.dart';
 import 'recurring_invoices_screen.dart';
 import 'reminders_screen.dart';
@@ -352,27 +350,11 @@ class _MainAppState extends State<MainApp> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.inventory_2_outlined),
-              title: const Text('Products'),
-              onTap: () {
-                Navigator.pop(context);
-                _pushScreen(const ProductsScreen());
-              },
-            ),
-            ListTile(
               leading: const Icon(Icons.repeat_on_outlined),
               title: const Text('Recurring Invoices'),
               onTap: () {
                 Navigator.pop(context);
                 _pushScreen(const RecurringInvoicesScreen());
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.insights_outlined),
-              title: const Text('Mini Analytics'),
-              onTap: () {
-                Navigator.pop(context);
-                _pushScreen(const AnalyticsScreen());
               },
             ),
             ListTile(

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -467,73 +465,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
     );
   }
 
-  void _showPayload(List<ReminderRecord> reminders) {
-    final String payload = const JsonEncoder.withIndent('  ').convert(
-      reminders
-          .map(
-            (ReminderRecord reminder) => <String, dynamic>{
-              'id': reminder.id,
-              ...reminder.toMap(),
-            },
-          )
-          .toList(),
-    );
 
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          margin: const EdgeInsets.only(top: 22),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Reminders Firebase Payload',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: SelectableText(
-                          payload,
-                          style: const TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   Future<void> _setReminderStatus(
     ReminderRecord reminder,
@@ -614,7 +546,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -623,16 +558,14 @@ class _RemindersScreenState extends State<RemindersScreen> {
                       children: <Widget>[
                         Icon(
                           Icons.notifications_active_outlined,
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             'Reminders (Realtime)',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -641,10 +574,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
                           style: FilledButton.styleFrom(
                             backgroundColor: Theme.of(
                               context,
-                            ).colorScheme.onPrimary.withValues(alpha: 0.2),
+                            ).colorScheme.primary.withValues(alpha: 0.15),
                             foregroundColor: Theme.of(
                               context,
-                            ).colorScheme.onPrimary,
+                            ).colorScheme.primary,
                           ),
                           icon: const Icon(Icons.add, size: 18),
                           label: const Text('Add'),
@@ -664,27 +597,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: OutlinedButton.icon(
-                        onPressed: filtered.isEmpty
-                            ? null
-                            : () => _showPayload(filtered),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Theme.of(
-                            context,
-                          ).colorScheme.onPrimary,
-                          side: BorderSide(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onPrimary.withValues(alpha: 0.5),
-                          ),
-                        ),
-                        icon: const Icon(Icons.cloud_upload_outlined, size: 18),
-                        label: const Text('Payload'),
-                      ),
-                    ),
+
                   ],
                 ),
               ),
@@ -696,7 +609,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   Expanded(
                     child: Text(
                       'Smart reminder timeline with due status',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                   ),
                 ],
@@ -796,7 +711,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
                                           Expanded(
                                             child: Text(
                                               reminder.title,
-                                              style: const TextStyle(
+                                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                                color: Theme.of(context).colorScheme.onSurface,
                                                 fontWeight: FontWeight.w700,
                                               ),
                                             ),
@@ -808,16 +724,15 @@ class _RemindersScreenState extends State<RemindersScreen> {
                                             ),
                                             decoration: BoxDecoration(
                                               color: statusColor.withValues(
-                                                alpha: 0.16,
+                                                alpha: 0.12,
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                             ),
                                             child: Text(
                                               reminder.status,
-                                              style: TextStyle(
+                                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                                 color: statusColor,
-                                                fontSize: 11,
                                                 fontWeight: FontWeight.w700,
                                               ),
                                             ),
@@ -825,7 +740,12 @@ class _RemindersScreenState extends State<RemindersScreen> {
                                         ],
                                       ),
                                       const SizedBox(height: 6),
-                                      Text(reminder.message),
+                                      Text(
+                                        reminder.message,
+                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Theme.of(context).colorScheme.onSurface,
+                                        ),
+                                      ),
                                       const SizedBox(height: 8),
                                       Wrap(
                                         spacing: 8,
@@ -862,9 +782,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
                                             reminder.enabled
                                                 ? 'Enabled'
                                                 : 'Disabled',
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodySmall,
+                                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              color: Theme.of(context).colorScheme.onSurface,
+                                            ),
                                           ),
                                           const Spacer(),
                                           PopupMenuButton<String>(
@@ -973,14 +893,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.14),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: color.withValues(alpha: 0.3),
+        ),
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: color,
-          fontSize: 11,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -989,34 +911,31 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
   Widget _metric(String label, String value) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final bool isDark = colorScheme.brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: isDark
-            ? colorScheme.primary.withValues(alpha: 0.2) // Proper dark mode
-            : colorScheme.primary.withValues(alpha: 0.08), // Light mode
+        color: colorScheme.primary.withValues(alpha: 0.08),
+        border: Border.all(
+          color: colorScheme.primary.withValues(alpha: 0.15),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             value,
-            style: TextStyle(
-              color: isDark ? Colors.white : colorScheme.primary,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: colorScheme.primary,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 3),
           Text(
             label,
-            style: TextStyle(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.85)
-                  : colorScheme.primary.withValues(alpha: 0.7),
-              fontSize: 11,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: colorScheme.onSurface,
             ),
           ),
         ],
@@ -1040,9 +959,18 @@ class _RemindersEmptyState extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Icon(Icons.timeline_outlined, size: 48),
+              Icon(
+                Icons.timeline_outlined,
+                size: 48,
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+              ),
               const SizedBox(height: 8),
-              const Text('No reminders in timeline yet'),
+              Text(
+                'No reminders in timeline yet',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
               const SizedBox(height: 6),
               ElevatedButton.icon(
                 onPressed: onAddReminder,

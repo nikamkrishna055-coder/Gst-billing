@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisSpacing: 8,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              childAspectRatio: 1.32,
+              childAspectRatio: 0.95,
               children: <Widget>[
                 ActionCard(
                   title: 'Add Client',

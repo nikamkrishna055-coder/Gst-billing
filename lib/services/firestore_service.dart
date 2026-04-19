@@ -1828,11 +1828,12 @@ class FirestoreService {
   Future<String> exportClientsCsv() async {
     final List<ClientRecord> clients = await streamClients().first;
     final StringBuffer csv = StringBuffer()
-      ..writeln('clientId,name,email,phone,address,gstin,state,creditLimit');
+      ..writeln('Name,Phone,Email,Address,GSTIN,State/Segment,Credit Limit');
+
+    // One row per client with all required columns
     for (final ClientRecord client in clients) {
       csv.writeln(
-        '${_csv(client.id)},${_csv(client.name)},${_csv(client.email)},${_csv(client.phone)},'
-        '${_csv(client.address)},${_csv(client.gstin)},${_csv(client.segment)},${client.creditLimit}',
+        '${_csv(client.name)},${_csv(client.phone)},${_csv(client.email)},${_csv(client.address)},${_csv(client.gstin)},${_csv(client.segment)},${client.creditLimit}',
       );
     }
     return csv.toString();
@@ -1842,14 +1843,31 @@ class FirestoreService {
     final List<InvoiceRecord> invoices = await streamInvoices().first;
     final StringBuffer csv = StringBuffer()
       ..writeln(
-        'invoiceId,invoiceNumber,client,status,issueDate,dueDate,totalAmount,gstPercent',
+        'Invoice No,Client No,Client Name,Item Name,Quantity,Price,GST,Status,Due Date',
       );
+
+    // Flatten data structure: one row per item
     for (final InvoiceRecord invoice in invoices) {
-      csv.writeln(
-        '${_csv(invoice.id)},${_csv(invoice.number)},${_csv(invoice.client)},${_csv(invoice.status)},'
-        '${invoice.date.toIso8601String()},${invoice.dueDate.toIso8601String()},'
-        '${invoice.totalAmount},${invoice.gstPercent}',
-      );
+      // Calculate GST per item based on invoice GST percent
+      final double gstPercentPerItem = invoice.gstPercent;
+
+      if (invoice.items.isEmpty) {
+        // If no items, create a placeholder row with invoice info
+        final String dueDate =
+            '${invoice.dueDate.year}-${invoice.dueDate.month.toString().padLeft(2, '0')}-${invoice.dueDate.day.toString().padLeft(2, '0')}';
+        csv.writeln(
+          '${_csv(invoice.number)},${_csv(invoice.clientId)},${_csv(invoice.client)},N/A,0,0,${gstPercentPerItem},${_csv(invoice.status)},${_csv(dueDate)}',
+        );
+      } else {
+        // Create one row per item
+        for (final InvoiceItem item in invoice.items) {
+          final String dueDate =
+              '${invoice.dueDate.year}-${invoice.dueDate.month.toString().padLeft(2, '0')}-${invoice.dueDate.day.toString().padLeft(2, '0')}';
+          csv.writeln(
+            '${_csv(invoice.number)},${_csv(invoice.clientId)},${_csv(invoice.client)},${_csv(item.product)},${item.qty},${item.price},${gstPercentPerItem},${_csv(invoice.status)},${_csv(dueDate)}',
+          );
+        }
+      }
     }
     return csv.toString();
   }

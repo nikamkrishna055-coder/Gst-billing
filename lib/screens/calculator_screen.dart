@@ -767,33 +767,52 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _calculatorKeys.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 1.1,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                final _CalculatorKey key = _calculatorKeys[index];
-                if (key.type == _CalculatorKeyType.empty) {
-                  return const SizedBox.shrink();
-                }
-                final _KeyStyle style = _styleForKey(key.type, context);
-                return _KeyButton(
-                  label: key.label,
-                  backgroundColor: style.background,
-                  foregroundColor: style.foreground,
-                  onTap: () => _onCalculatorKeyTap(key.label),
-                );
-              },
-            ),
+            _buildResponsiveCalculatorGrid(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildResponsiveCalculatorGrid() {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    
+    // Responsive cross axis count based on screen width
+    int crossAxisCount = 5;
+    if (screenWidth < 350) {
+      crossAxisCount = 4;
+    } else if (screenWidth < 400) {
+      crossAxisCount = 5;
+    } else {
+      crossAxisCount = 5;
+    }
+    
+    // Responsive spacing
+    final double spacing = screenWidth < 400 ? 8 : 10;
+    
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _calculatorKeys.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: spacing,
+        mainAxisSpacing: spacing,
+        childAspectRatio: 1.0,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        final _CalculatorKey key = _calculatorKeys[index];
+        if (key.type == _CalculatorKeyType.empty) {
+          return const SizedBox.shrink();
+        }
+        final _KeyStyle style = _styleForKey(key.type, context);
+        return _KeyButton(
+          label: key.label,
+          backgroundColor: style.background,
+          foregroundColor: style.foreground,
+          onTap: () => _onCalculatorKeyTap(key.label),
+        );
+      },
     );
   }
 
@@ -1634,6 +1653,10 @@ class _KeyButtonState extends State<_KeyButton> {
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final bool isDark = colorScheme.brightness == Brightness.dark;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    
+    // Responsive font size based on screen width
+    final double fontSize = screenWidth < 400 ? 12 : 14;
 
     return AnimatedScale(
       scale: _pressed ? 0.95 : 1,
@@ -1657,12 +1680,18 @@ class _KeyButtonState extends State<_KeyButton> {
             onTapCancel: () => setState(() => _pressed = false),
             onTapUp: (_) => setState(() => _pressed = false),
             child: Center(
-              child: Text(
-                widget.label,
-                style: TextStyle(
-                  color: widget.foregroundColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    widget.label,
+                    style: TextStyle(
+                      color: widget.foregroundColor,
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
             ),

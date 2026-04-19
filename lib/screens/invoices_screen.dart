@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -1003,67 +1001,6 @@ class InvoiceDetailScreen extends StatelessWidget {
     }
   }
 
-  void _showPayload(BuildContext context, InvoiceRecord currentInvoice) {
-    final String payload = const JsonEncoder.withIndent('  ').convert(
-      <String, dynamic>{'id': currentInvoice.id, ...currentInvoice.toMap()},
-    );
-
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          margin: const EdgeInsets.only(top: 22),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Invoice Firebase Payload',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: SelectableText(
-                          payload,
-                          style: const TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final FirestoreService? firestore = context.read<FirestoreService?>();
@@ -1296,15 +1233,6 @@ class InvoiceDetailScreen extends StatelessWidget {
                         },
                         icon: const Icon(Icons.download_outlined),
                         label: const Text('Download Invoice PDF'),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () => _showPayload(context, currentInvoice),
-                        icon: const Icon(Icons.cloud_upload_outlined),
-                        label: const Text('Firebase Payload'),
                       ),
                     ),
                   ],
