@@ -87,6 +87,8 @@ class InvoiceTile extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       invoiceNo,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
@@ -96,6 +98,8 @@ class InvoiceTile extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       clientName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: colorScheme.onSurface,
                         fontSize: 14,

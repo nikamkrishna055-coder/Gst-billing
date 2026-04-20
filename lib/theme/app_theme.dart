@@ -306,9 +306,19 @@ class AppTheme {
       // BOTTOM NAVIGATION BAR THEME
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         selectedItemColor: lightPrimaryBlue,
-        unselectedItemColor: lightBorderMedium,
+        unselectedItemColor: lightTextSecondary,
         type: BottomNavigationBarType.fixed,
         backgroundColor: lightSurfaceCard,
+        selectedLabelStyle: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: lightPrimaryBlue,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          color: lightTextSecondary,
+        ),
       ),
 
       // DIVIDER COLOR
@@ -554,9 +564,19 @@ class AppTheme {
       // BOTTOM NAVIGATION BAR THEME
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         selectedItemColor: darkPrimaryBlue,
-        unselectedItemColor: darkTextSecondary.withValues(alpha: 0.6),
+        unselectedItemColor: darkTextSecondary.withValues(alpha: 0.7),
         type: BottomNavigationBarType.fixed,
         backgroundColor: darkSurfaceCardGlass,
+        selectedLabelStyle: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: darkPrimaryBlue,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          color: darkTextSecondary.withValues(alpha: 0.7),
+        ),
       ),
 
       // DIVIDER COLOR

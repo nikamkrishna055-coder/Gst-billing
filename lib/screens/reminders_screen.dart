@@ -93,373 +93,393 @@ class _RemindersScreenState extends State<RemindersScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder:
-              (
-                BuildContext context,
-                void Function(void Function()) setModalState,
-              ) {
-                return Container(
-                  margin: const EdgeInsets.only(top: 22),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(24),
-                    ),
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        16,
-                        16,
-                        MediaQuery.of(context).viewInsets.bottom + 16,
-                      ),
-                      child: Form(
-                        key: formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Center(
-                              child: Container(
-                                width: 42,
-                                height: 5,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).dividerColor,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              'Create Reminder',
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Saved in users/{uid}/reminders',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            const SizedBox(height: 14),
-                            TextFormField(
-                              controller: titleController,
-                              decoration: const InputDecoration(
-                                labelText: 'Title',
-                                prefixIcon: Icon(Icons.alarm_add_outlined),
-                              ),
-                              validator: (String? value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Enter title';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: invoiceIdController,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Invoice ID',
-                                      prefixIcon: Icon(
-                                        Icons.receipt_long_outlined,
-                                      ),
-                                    ),
-                                    validator: (String? value) {
-                                      if (value == null ||
-                                          value.trim().isEmpty) {
-                                        return 'Enter invoice ID';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: clientIdController,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Client ID',
-                                      prefixIcon: Icon(Icons.badge_outlined),
-                                    ),
-                                    validator: (String? value) {
-                                      if (value == null ||
-                                          value.trim().isEmpty) {
-                                        return 'Enter client ID';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: clientNameController,
-                              decoration: const InputDecoration(
-                                labelText: 'Client Name',
-                                prefixIcon: Icon(Icons.person_outline),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: DropdownButtonFormField<String>(
-                                    initialValue: status,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Status',
-                                      prefixIcon: Icon(Icons.flag_outlined),
-                                    ),
-                                    items: const <DropdownMenuItem<String>>[
-                                      DropdownMenuItem<String>(
-                                        value: 'Pending',
-                                        child: Text('Pending'),
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        value: 'Scheduled',
-                                        child: Text('Scheduled'),
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        value: 'Done',
-                                        child: Text('Done'),
-                                      ),
-                                    ],
-                                    onChanged: (String? value) {
-                                      if (value == null) {
-                                        return;
-                                      }
-                                      setModalState(() {
-                                        status = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: DropdownButtonFormField<String>(
-                                    initialValue: type,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Type',
-                                      prefixIcon: Icon(Icons.category_outlined),
-                                    ),
-                                    items: const <DropdownMenuItem<String>>[
-                                      DropdownMenuItem<String>(
-                                        value: 'Invoice',
-                                        child: Text('Invoice'),
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        value: 'GST',
-                                        child: Text('GST'),
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        value: 'Income Tax',
-                                        child: Text('Income Tax'),
-                                      ),
-                                    ],
-                                    onChanged: (String? value) {
-                                      if (value == null) {
-                                        return;
-                                      }
-                                      setModalState(() {
-                                        type = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: DropdownButtonFormField<String>(
-                                    initialValue: priority,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Priority',
-                                      prefixIcon: Icon(
-                                        Icons.priority_high_outlined,
-                                      ),
-                                    ),
-                                    items: const <DropdownMenuItem<String>>[
-                                      DropdownMenuItem<String>(
-                                        value: 'High',
-                                        child: Text('High'),
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        value: 'Medium',
-                                        child: Text('Medium'),
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        value: 'Low',
-                                        child: Text('Low'),
-                                      ),
-                                    ],
-                                    onChanged: (String? value) {
-                                      if (value == null) {
-                                        return;
-                                      }
-                                      setModalState(() {
-                                        priority = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: DropdownButtonFormField<String>(
-                                    initialValue: channel,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Channel',
-                                      prefixIcon: Icon(Icons.campaign_outlined),
-                                    ),
-                                    items: const <DropdownMenuItem<String>>[
-                                      DropdownMenuItem<String>(
-                                        value: 'WhatsApp',
-                                        child: Text('WhatsApp'),
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        value: 'SMS',
-                                        child: Text('SMS'),
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        value: 'Email',
-                                        child: Text('Email'),
-                                      ),
-                                    ],
-                                    onChanged: (String? value) {
-                                      if (value == null) {
-                                        return;
-                                      }
-                                      setModalState(() {
-                                        channel = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            InkWell(
-                              borderRadius: BorderRadius.circular(16),
-                              onTap: () async {
-                                final DateTime? pickedDate =
-                                    await showDatePicker(
-                                      context: context,
-                                      firstDate: DateTime.now().subtract(
-                                        const Duration(days: 1),
-                                      ),
-                                      lastDate: DateTime.now().add(
-                                        const Duration(days: 365),
-                                      ),
-                                      initialDate: dueDate,
-                                    );
-                                if (pickedDate == null) {
-                                  return;
-                                }
-                                setModalState(() {
-                                  dueDate = pickedDate;
-                                });
-                              },
-                              child: InputDecorator(
-                                decoration: const InputDecoration(
-                                  labelText: 'Due Date',
-                                  prefixIcon: Icon(
-                                    Icons.calendar_today_outlined,
-                                  ),
-                                ),
-                                child: Text(_dateLabel(dueDate)),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: messageController,
-                              maxLines: 3,
-                              decoration: const InputDecoration(
-                                labelText: 'Message',
-                                alignLabelWithHint: true,
-                                prefixIcon: Icon(Icons.message_outlined),
-                              ),
-                              validator: (String? value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Enter message';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 8),
-                            SwitchListTile(
-                              contentPadding: EdgeInsets.zero,
-                              value: enabled,
-                              onChanged: (bool value) {
-                                setModalState(() {
-                                  enabled = value;
-                                });
-                              },
-                              title: const Text('Enable reminder'),
-                            ),
-                            const SizedBox(height: 10),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                onPressed: () async {
-                                  if (!formKey.currentState!.validate()) {
-                                    return;
-                                  }
-                                  final FirestoreService firestoreService =
-                                      context.read<FirestoreService>();
-                                  final AnalyticsService analyticsService =
-                                      context.read<AnalyticsService>();
-                                  final NavigatorState navigator = Navigator.of(
-                                    context,
-                                  );
-                                  try {
-                                    await firestoreService.addReminder(
-                                      invoiceId: invoiceIdController.text
-                                          .trim(),
-                                      clientId: clientIdController.text.trim(),
-                                      dueDate: dueDate,
-                                      status: status,
-                                      reminderSent: false,
-                                      title: titleController.text.trim(),
-                                      type: type,
-                                      priority: priority,
-                                      enabled: enabled,
-                                      message: messageController.text.trim(),
-                                      channel: channel,
-                                      clientName: clientNameController.text
-                                          .trim(),
-                                    );
-                                    await analyticsService.logEvent(
-                                      'create_reminder',
-                                    );
-                                    if (!mounted) {
-                                      return;
-                                    }
-                                    navigator.pop();
-                                    _showMessage(
-                                      'Reminder saved to Firestore.',
-                                    );
-                                  } catch (error) {
-                                    _showMessage(
-                                      'Could not save reminder: $error',
-                                    );
-                                  }
-                                },
-                                icon: const Icon(Icons.save_outlined),
-                                label: const Text('Save Reminder'),
-                              ),
-                            ),
-                          ],
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.85,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return StatefulBuilder(
+              builder:
+                  (
+                    BuildContext context,
+                    void Function(void Function()) setModalState,
+                  ) {
+                    return Container(
+                      margin: const EdgeInsets.only(top: 22),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(24),
                         ),
                       ),
-                    ),
-                  ),
-                );
-              },
+                      child: SafeArea(
+                        top: false,
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          padding: EdgeInsets.fromLTRB(
+                            16,
+                            16,
+                            16,
+                            MediaQuery.of(context).viewInsets.bottom + 16,
+                          ),
+                          child: Form(
+                            key: formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Center(
+                                  child: Container(
+                                    width: 42,
+                                    height: 5,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).dividerColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+                                Text(
+                                  'Create Reminder',
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(fontWeight: FontWeight.w700),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Saved in users/{uid}/reminders',
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 14),
+                                TextFormField(
+                                  controller: titleController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Title',
+                                    prefixIcon: Icon(Icons.alarm_add_outlined),
+                                  ),
+                                  validator: (String? value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return 'Enter title';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: invoiceIdController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Invoice ID',
+                                          prefixIcon: Icon(
+                                            Icons.receipt_long_outlined,
+                                          ),
+                                        ),
+                                        validator: (String? value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
+                                            return 'Enter invoice ID';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: clientIdController,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Client ID',
+                                          prefixIcon: Icon(Icons.badge_outlined),
+                                        ),
+                                        validator: (String? value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
+                                            return 'Enter client ID';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                TextFormField(
+                                  controller: clientNameController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Client Name',
+                                    prefixIcon: Icon(Icons.person_outline),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        initialValue: status,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Status',
+                                          prefixIcon: Icon(Icons.flag_outlined),
+                                        ),
+                                        items: const <DropdownMenuItem<String>>[
+                                          DropdownMenuItem<String>(
+                                            value: 'Pending',
+                                            child: Text('Pending'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'Scheduled',
+                                            child: Text('Scheduled'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'Done',
+                                            child: Text('Done'),
+                                          ),
+                                        ],
+                                        onChanged: (String? value) {
+                                          if (value == null) {
+                                            return;
+                                          }
+                                          setModalState(() {
+                                            status = value;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        initialValue: type,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Type',
+                                          prefixIcon:
+                                              Icon(Icons.category_outlined),
+                                        ),
+                                        items: const <DropdownMenuItem<String>>[
+                                          DropdownMenuItem<String>(
+                                            value: 'Invoice',
+                                            child: Text('Invoice'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'GST',
+                                            child: Text('GST'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'Income Tax',
+                                            child: Text('Income Tax'),
+                                          ),
+                                        ],
+                                        onChanged: (String? value) {
+                                          if (value == null) {
+                                            return;
+                                          }
+                                          setModalState(() {
+                                            type = value;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        initialValue: priority,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Priority',
+                                          prefixIcon: Icon(
+                                            Icons.priority_high_outlined,
+                                          ),
+                                        ),
+                                        items: const <DropdownMenuItem<String>>[
+                                          DropdownMenuItem<String>(
+                                            value: 'High',
+                                            child: Text('High'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'Medium',
+                                            child: Text('Medium'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'Low',
+                                            child: Text('Low'),
+                                          ),
+                                        ],
+                                        onChanged: (String? value) {
+                                          if (value == null) {
+                                            return;
+                                          }
+                                          setModalState(() {
+                                            priority = value;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        initialValue: channel,
+                                        decoration: const InputDecoration(
+                                          labelText: 'Channel',
+                                          prefixIcon:
+                                              Icon(Icons.campaign_outlined),
+                                        ),
+                                        items: const <DropdownMenuItem<String>>[
+                                          DropdownMenuItem<String>(
+                                            value: 'WhatsApp',
+                                            child: Text('WhatsApp'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'SMS',
+                                            child: Text('SMS'),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'Email',
+                                            child: Text('Email'),
+                                          ),
+                                        ],
+                                        onChanged: (String? value) {
+                                          if (value == null) {
+                                            return;
+                                          }
+                                          setModalState(() {
+                                            channel = value;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                InkWell(
+                                  borderRadius: BorderRadius.circular(16),
+                                  onTap: () async {
+                                    final DateTime? pickedDate =
+                                        await showDatePicker(
+                                          context: context,
+                                          firstDate:
+                                              DateTime.now().subtract(
+                                            const Duration(days: 1),
+                                          ),
+                                          lastDate: DateTime.now().add(
+                                            const Duration(days: 365),
+                                          ),
+                                          initialDate: dueDate,
+                                        );
+                                    if (pickedDate == null) {
+                                      return;
+                                    }
+                                    setModalState(() {
+                                      dueDate = pickedDate;
+                                    });
+                                  },
+                                  child: InputDecorator(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Due Date',
+                                      prefixIcon: Icon(
+                                        Icons.calendar_today_outlined,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      _dateLabel(dueDate),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                TextFormField(
+                                  controller: messageController,
+                                  maxLines: 3,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Message',
+                                    alignLabelWithHint: true,
+                                    prefixIcon: Icon(Icons.message_outlined),
+                                  ),
+                                  validator: (String? value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return 'Enter message';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 12),
+                                SwitchListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  value: enabled,
+                                  onChanged: (bool value) {
+                                    setModalState(() {
+                                      enabled = value;
+                                    });
+                                  },
+                                  title: const Text('Enable reminder'),
+                                ),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () async {
+                                      if (!formKey.currentState!.validate()) {
+                                        return;
+                                      }
+                                      final FirestoreService firestoreService =
+                                          context.read<FirestoreService>();
+                                      final AnalyticsService analyticsService =
+                                          context.read<AnalyticsService>();
+                                      final NavigatorState navigator =
+                                          Navigator.of(
+                                        context,
+                                      );
+                                      try {
+                                        await firestoreService.addReminder(
+                                          invoiceId: invoiceIdController.text
+                                              .trim(),
+                                          clientId:
+                                              clientIdController.text.trim(),
+                                          dueDate: dueDate,
+                                          status: status,
+                                          reminderSent: false,
+                                          title: titleController.text.trim(),
+                                          type: type,
+                                          priority: priority,
+                                          enabled: enabled,
+                                          message:
+                                              messageController.text.trim(),
+                                          channel: channel,
+                                          clientName: clientNameController.text
+                                              .trim(),
+                                        );
+                                        await analyticsService.logEvent(
+                                          'create_reminder',
+                                        );
+                                        if (!mounted) {
+                                          return;
+                                        }
+                                        navigator.pop();
+                                        _showMessage(
+                                          'Reminder saved to Firestore.',
+                                        );
+                                      } catch (error) {
+                                        _showMessage(
+                                          'Could not save reminder: $error',
+                                        );
+                                      }
+                                    },
+                                    icon: const Icon(Icons.save_outlined),
+                                    label: const Text('Save Reminder'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+            );
+          },
         );
       },
     );

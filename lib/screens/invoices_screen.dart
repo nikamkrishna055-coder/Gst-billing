@@ -1251,12 +1251,24 @@ class InvoiceDetailScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(key),
-          Text(
-            value,
-            style: TextStyle(
-              fontWeight: emphasize ? FontWeight.w800 : FontWeight.w600,
-              fontSize: emphasize ? 17 : 14,
+          Flexible(
+            child: Text(
+              key,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontWeight: emphasize ? FontWeight.w800 : FontWeight.w600,
+                fontSize: emphasize ? 17 : 14,
+              ),
             ),
           ),
         ],

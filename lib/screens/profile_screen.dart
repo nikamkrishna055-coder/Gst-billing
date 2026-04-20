@@ -309,11 +309,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              color: colorScheme.onSurface,
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onSurface,
+              ),
             ),
           ),
         ],

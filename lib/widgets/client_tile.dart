@@ -66,6 +66,8 @@ class ClientTile extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,

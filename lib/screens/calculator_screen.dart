@@ -1,7 +1,15 @@
+import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../services/analytics_service.dart';
 import '../services/firestore_service.dart';
@@ -590,11 +598,400 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
 
   Future<void> _saveAsInvoiceItem() async {
     try {
-      final FirestoreService firestoreService = context
-          .read<FirestoreService>();
-      final AnalyticsService analyticsService = context
-          .read<AnalyticsService>();
-      final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+      print("PDF generation started...");
+      
+      final double pricePerPiece = _readController(_priceController);
+      final double quantity = _readController(_quantityController);
+      final double discountPercent = _readController(
+        _discountController,
+      ).clamp(0, 100);
+      final double markupPercent = _readController(
+        _markupController,
+      ).clamp(0, 1000);
+
+      if (pricePerPiece <= 0 || quantity <= 0) {
+        _showCalculatorError('Enter valid price and quantity before saving.');
+        return;
+      }
+
+      // Calculate amounts
+      final double subtotal = quantity * pricePerPiece;
+      final double discountAmount = subtotal * (discountPercent / 100);
+      final double taxableAmount = subtotal - discountAmount;
+      final double gstAmount = taxableAmount * (_selectedGstRate / 100);
+      final double totalAmount = taxableAmount + gstAmount;
+
+      // Generate PDF
+      await _generateInvoicePDF(
+        pricePerPiece: pricePerPiece,
+        quantity: quantity,
+        subtotal: subtotal,
+        discountAmount: discountAmount,
+        taxableAmount: taxableAmount,
+        gstAmount: gstAmount,
+        totalAmount: totalAmount,
+        discountPercent: discountPercent,
+        gstRate: _selectedGstRate,
+        gstType: _selectedGstType.name,
+      );
+
+      print("PDF generation completed successfully!");
+      
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invoice PDF generated successfully!'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (error) {
+      print("PDF generation error: $error");
+      _showCalculatorError('Failed to generate PDF: $error');
+    }
+  }
+
+  Future<void> _generateInvoicePDF({
+    required double pricePerPiece,
+    required double quantity,
+    required double subtotal,
+    required double discountAmount,
+    required double taxableAmount,
+    required double gstAmount,
+    required double totalAmount,
+    required double discountPercent,
+    required double gstRate,
+    required String gstType,
+  }) async {
+    try {
+      print("Loading font...");
+      
+      // Load font with fallback
+      pw.Font ttf;
+      try {
+        final fontData = await rootBundle.load("assets/fonts/NotoSans-Regular.ttf");
+        ttf = pw.Font.ttf(fontData);
+        print("Custom font loaded successfully");
+      } catch (e) {
+        print("Custom font not found, using default: $e");
+        ttf = pw.Font.helvetica();
+      }
+
+      print("Creating PDF document...");
+      
+      final pdf = pw.Document();
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(40),
+          build: (pw.Context context) {
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: <pw.Widget>[
+                // Header
+                pw.Center(
+                  child: pw.Text(
+                    'INVOICE',
+                    style: pw.TextStyle(
+                      font: ttf,
+                      fontSize: 28,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                ),
+                pw.SizedBox(height: 10),
+                pw.Divider(thickness: 2),
+                pw.SizedBox(height: 20),
+
+                // Invoice Details
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: <pw.Widget>[
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: <pw.Widget>[
+                        pw.Text(
+                          'Date: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                          style: pw.TextStyle(font: ttf, fontSize: 12),
+                        ),
+                        pw.SizedBox(height: 5),
+                        pw.Text(
+                          'Invoice ID: INV-${DateTime.now().millisecondsSinceEpoch}',
+                          style: pw.TextStyle(font: ttf, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.end,
+                      children: <pw.Widget>[
+                        pw.Text(
+                          'GST Type: $gstType',
+                          style: pw.TextStyle(
+                            font: ttf,
+                            fontSize: 12,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                pw.SizedBox(height: 30),
+
+                // Items Table
+                pw.Text(
+                  'ITEMS',
+                  style: pw.TextStyle(
+                    font: ttf,
+                    fontSize: 14,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.SizedBox(height: 10),
+                pw.Table(
+                  border: pw.TableBorder.all(width: 1),
+                  children: <pw.TableRow>[
+                    // Header
+                    pw.TableRow(
+                      decoration: const pw.BoxDecoration(
+                        color: PdfColors.grey300,
+                      ),
+                      children: <pw.Widget>[
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Description',
+                            style: pw.TextStyle(
+                              font: ttf,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Qty',
+                            style: pw.TextStyle(
+                              font: ttf,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Unit Price',
+                            style: pw.TextStyle(
+                              font: ttf,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                            textAlign: pw.TextAlign.right,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Amount',
+                            style: pw.TextStyle(
+                              font: ttf,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                            textAlign: pw.TextAlign.right,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Data row
+                    pw.TableRow(
+                      children: <pw.Widget>[
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Product/Service',
+                            style: pw.TextStyle(font: ttf, fontSize: 11),
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            quantity.toStringAsFixed(2),
+                            style: pw.TextStyle(font: ttf, fontSize: 11),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Rs.${pricePerPiece.toStringAsFixed(2)}',
+                            style: pw.TextStyle(font: ttf, fontSize: 11),
+                            textAlign: pw.TextAlign.right,
+                          ),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(8),
+                          child: pw.Text(
+                            'Rs.${subtotal.toStringAsFixed(2)}',
+                            style: pw.TextStyle(font: ttf, fontSize: 11),
+                            textAlign: pw.TextAlign.right,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                pw.SizedBox(height: 30),
+
+                // Summary
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                  children: <pw.Widget>[
+                    pw.SizedBox(
+                      width: 350,
+                      child: pw.Column(
+                        children: <pw.Widget>[
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            children: <pw.Widget>[
+                              pw.Text(
+                                'Subtotal:',
+                                style: pw.TextStyle(font: ttf, fontSize: 11),
+                              ),
+                              pw.Text(
+                                'Rs.${subtotal.toStringAsFixed(2)}',
+                                style: pw.TextStyle(font: ttf, fontSize: 11),
+                              ),
+                            ],
+                          ),
+                          pw.SizedBox(height: 8),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            children: <pw.Widget>[
+                              pw.Text(
+                                'Discount (${discountPercent.toStringAsFixed(1)}%):',
+                                style: pw.TextStyle(font: ttf, fontSize: 11),
+                              ),
+                              pw.Text(
+                                '-Rs.${discountAmount.toStringAsFixed(2)}',
+                                style: pw.TextStyle(font: ttf, fontSize: 11),
+                              ),
+                            ],
+                          ),
+                          pw.SizedBox(height: 8),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            children: <pw.Widget>[
+                              pw.Text(
+                                'Taxable Amount:',
+                                style: pw.TextStyle(font: ttf, fontSize: 11),
+                              ),
+                              pw.Text(
+                                'Rs.${taxableAmount.toStringAsFixed(2)}',
+                                style: pw.TextStyle(font: ttf, fontSize: 11),
+                              ),
+                            ],
+                          ),
+                          pw.SizedBox(height: 8),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            children: <pw.Widget>[
+                              pw.Text(
+                                'GST (${gstRate.toStringAsFixed(1)}%):',
+                                style: pw.TextStyle(font: ttf, fontSize: 11),
+                              ),
+                              pw.Text(
+                                'Rs.${gstAmount.toStringAsFixed(2)}',
+                                style: pw.TextStyle(font: ttf, fontSize: 11),
+                              ),
+                            ],
+                          ),
+                          pw.Divider(thickness: 1),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            children: <pw.Widget>[
+                              pw.Text(
+                                'TOTAL:',
+                                style: pw.TextStyle(
+                                  font: ttf,
+                                  fontSize: 13,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
+                              ),
+                              pw.Text(
+                                'Rs.${totalAmount.toStringAsFixed(2)}',
+                                style: pw.TextStyle(
+                                  font: ttf,
+                                  fontSize: 13,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                pw.SizedBox(height: 30),
+
+                // Footer
+                pw.Center(
+                  child: pw.Text(
+                    'Thank you',
+                    style: pw.TextStyle(
+                      font: ttf,
+                      fontSize: 11,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+
+      print("PDF document created, saving...");
+      
+      final bytes = await pdf.save();
+      final fileName = 'invoice_${DateTime.now().millisecondsSinceEpoch}.pdf';
+
+      print("PDF bytes generated (${bytes.length} bytes), opening/sharing...");
+
+      // On web, use printing to open PDF
+      if (kIsWeb) {
+        await Printing.layoutPdf(
+          onLayout: (format) async => bytes,
+          name: fileName,
+        );
+      } else {
+        // On mobile, save to temp directory and share
+        final tempDir = await getTemporaryDirectory();
+        final file = File('${tempDir.path}/$fileName');
+        await file.writeAsBytes(bytes);
+        
+        print("PDF saved to: ${file.path}");
+        
+        await Share.shareXFiles(
+          [XFile(file.path)],
+          subject: 'Invoice PDF',
+          text: 'Invoice has been generated',
+        );
+      }
+
+      print("PDF operation completed!");
+    } catch (e) {
+      print("PDF generation error details: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> _saveAsInvoiceItemOld() async {
+    try {
+      final FirestoreService firestoreService = context.read<FirestoreService>();
+      final AnalyticsService analyticsService = context.read<AnalyticsService>();
 
       final double pricePerPiece = _readController(_priceController);
       final double quantity = _readController(_quantityController);
@@ -623,7 +1020,7 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Saved as invoice draft in Firestore.')),
       );
     } catch (error) {
@@ -826,16 +1223,21 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
           children: <Widget>[
             Expanded(
               child: ChoiceChip(
-                label: const Text('Normal Calculator'),
+                label: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    'Normal Calculator',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: _calculatorMode == CalculatorMode.normal
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
                 selected: _calculatorMode == CalculatorMode.normal,
                 selectedColor: Theme.of(context).colorScheme.primary,
                 backgroundColor: Theme.of(context).colorScheme.surface,
-                labelStyle: TextStyle(
-                  color: _calculatorMode == CalculatorMode.normal
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
                 onSelected: (_) {
                   setState(() {
                     _calculatorMode = CalculatorMode.normal;
@@ -846,16 +1248,21 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
             const SizedBox(width: 8),
             Expanded(
               child: ChoiceChip(
-                label: const Text('GST Billing Mode'),
+                label: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    'GST Billing Mode',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: _calculatorMode == CalculatorMode.gstBilling
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
                 selected: _calculatorMode == CalculatorMode.gstBilling,
                 selectedColor: Theme.of(context).colorScheme.primary,
                 backgroundColor: Theme.of(context).colorScheme.surface,
-                labelStyle: TextStyle(
-                  color: _calculatorMode == CalculatorMode.gstBilling
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
                 onSelected: (_) {
                   setState(() {
                     _calculatorMode = CalculatorMode.gstBilling;
@@ -1228,28 +1635,6 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: _recalculateBilling,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryBlue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    icon: const Icon(Icons.calculate_outlined),
-                    label: const Text(
-                      'Calculate Bill',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
                   child: OutlinedButton.icon(
                     onPressed: _saveAsInvoiceItem,
                     style: OutlinedButton.styleFrom(
@@ -1458,6 +1843,8 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
           Flexible(
             child: Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: emphasize ? 16 : 14,
@@ -1466,12 +1853,17 @@ class _AdvancedCalculatorScreenState extends State<AdvancedCalculatorScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          Text(
-            displayValue,
-            style: TextStyle(
-              color: valueColor ?? Theme.of(context).colorScheme.onSurface,
-              fontSize: emphasize ? 20 : 15,
-              fontWeight: emphasize ? FontWeight.w800 : FontWeight.w600,
+          Flexible(
+            child: Text(
+              displayValue,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color: valueColor ?? Theme.of(context).colorScheme.onSurface,
+                fontSize: emphasize ? 20 : 15,
+                fontWeight: emphasize ? FontWeight.w800 : FontWeight.w600,
+              ),
             ),
           ),
         ],
