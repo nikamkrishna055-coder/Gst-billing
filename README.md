@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # 🧾 GST Billing Application
+=======
+# GST Billing  App
+>>>>>>> 6a3e4e9017f6ac8c497c485b9585c7bec52a3784
 
 A simple and efficient **GST Billing Application** built using **Flutter**.  
 This application helps users generate GST bills, calculate tax automatically, and manage billing details in an easy and user‑friendly interface.
