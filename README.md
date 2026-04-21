@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # 🧾 GST Billing Application
-=======
-# GST Billing  App
->>>>>>> 6a3e4e9017f6ac8c497c485b9585c7bec52a3784
 
 A simple and efficient **GST Billing Application** built using **Flutter**.  
 This application helps users generate GST bills, calculate tax automatically, and manage billing details in an easy and user‑friendly interface.
@@ -123,20 +119,6 @@ https://github.com/nikamkrishna055-coder
 # 📜 License
 
 This project is created for **Educational Purpose / Mini Project**
-
----
-
-# ⭐ Contribution
-
-Contributions are welcome!
-
-1. Fork Repository  
-2. Create Branch  
-3. Commit Changes  
-4. Push  
-5. Create Pull Request  
-
----
 
 # ❤️ Support
 
