@@ -1,140 +1,139 @@
-# GST Billing SaaS App
-Updated GST Billing App 
+# 🧾 GST Billing Application
 
-Smart GST billing and business operations app built with Flutter + Firebase.
+A simple and efficient **GST Billing Application** built using **Flutter**.  
+This application helps users generate GST bills, calculate tax automatically, and manage billing details in an easy and user‑friendly interface.
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)](https://flutter.dev/)
-[![Firebase](https://img.shields.io/badge/Firebase-Integrated-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![Firestore](https://img.shields.io/badge/Cloud%20Firestore-Live%20Streams-FF6F00)](https://firebase.google.com/docs/firestore)
-[![Auth](https://img.shields.io/badge/Auth-Email%2FPassword-0A84FF)](https://firebase.google.com/docs/auth)
-[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-2E7D32)](https://flutter.dev/multi-platform)
+---
 
-## Why This Project
+# 🚀 Features
 
-This app is designed as a mini SaaS billing system, not a UI-only prototype.
-It supports secure multi-user access, multi-company data isolation, recurring billing, GST calculations, and live financial reporting.
+- Generate GST Bills
+- Automatic GST Calculation
+- Add Customer Details
+- Add Product Details
+- Calculate Total Amount
+- Clean User Interface
+- Cross‑Platform Support (Android / Windows / Web)
 
-## Core Features
+---
 
-- Authentication
-  - Register/Login/Logout with Firebase Auth
-  - Auth gate with persisted session handling
-- Multi-company support
-  - Add/Edit/Delete company
-  - Active company switcher in app bar
-  - All business data scoped per selected company
-- Business modules
-  - Clients CRUD
-  - Products CRUD
-  - Invoices CRUD
-  - Reminders CRUD
-  - Recurring invoices with pause/resume and auto-generate
-- Billing engine
-  - GST slab handling (0/5/12/18/28 in calculator + invoices)
-  - Same-state logic: CGST + SGST
-  - Different-state logic: IGST
-  - Payment tracking: paid amount, balance amount, payment history
-- Reporting and exports
-  - Monthly revenue report
-  - GST summary report
-  - Top clients report
-  - CSV exports
-- Security
-  - Firestore rules scoped to authenticated user path
-  - Role-aware invoice delete rule (admin/owner only)
+# 🛠️ Tech Stack
 
-## Architecture
+- Flutter
+- Dart
+- Material UI
+- SQLite / Local Storage
+- Android Studio / VS Code
 
-```mermaid
-flowchart LR
-  UI["Flutter Screens"] --> Services["Service Layer"]
-  Services --> Auth["Firebase Auth"]
-  Services --> DB["Cloud Firestore"]
-  Services --> Analytics["Firebase Analytics"]
-  Services --> Messaging["Firebase Messaging"]
-  DB --> Streams["Realtime Streams"]
-  Streams --> UI
+---
+
+# 📁 Project Structure
+
+```
+Gst-billing/
+│
+├── lib/
+│   ├── main.dart
+│   ├── screens/
+│   ├── models/
+│   ├── widgets/
+│
+├── android/
+├── ios/
+├── web/
+├── windows/
+├── linux/
+├── macos/
+│
+├── pubspec.yaml
+├── README.md
 ```
 
-## Project Structure
+---
 
-```text
-lib/
-├── models/
-├── screens/
-├── services/
-├── theme/
-└── widgets/
-```
+# ⚙️ Installation & Setup
 
-## Firestore Data Model
-
-```text
-users/{uid}
-  - profile fields
-  - role (admin/staff)
-  - activeCompanyId
-  activityLogs/{logId}
-  clients/{clientId}                 # legacy migration support
-  products/{productId}               # legacy migration support
-  invoices/{invoiceId}               # legacy migration support
-  reminders/{reminderId}             # legacy migration support
-  companies/{companyId}
-    - company profile fields
-    clients/{clientId}
-    products/{productId}
-    invoices/{invoiceId}
-    reminders/{reminderId}
-    recurringInvoices/{recurringId}
-    analytics/{eventId}
-```
-
-## Firebase Setup
-
-1. Create or use project: `rohandb-58168`
-2. Enable Authentication provider:
-   - `Authentication > Sign-in method > Email/Password`
-3. Configure FlutterFire:
+### 1. Clone Repository
 
 ```bash
-dart pub global activate flutterfire_cli
-flutterfire configure --project=rohandb-58168 --platforms=android,ios,web
+git clone https://github.com/nikamkrishna055-coder/Gst-billing.git
 ```
 
-4. Deploy Firestore rules:
+### 2. Go to Project Folder
 
 ```bash
-firebase deploy --only firestore:rules --project rohandb-58168
+cd Gst-billing
 ```
 
-## Local Development
+### 3. Install Dependencies
 
 ```bash
-flutter clean
 flutter pub get
-flutter analyze
-flutter test
-flutter run -d chrome
 ```
 
-## Web Notes (FCM)
+### 4. Run Application
 
-This repo includes web service worker support:
+```bash
+flutter run
+```
 
-- `web/firebase-messaging-sw.js`
+---
 
-If push notifications are not needed in local web debug, app still runs safely without crashing.
+# 📱 Screenshots
 
-## QA Status
+(Add screenshots here if available)
 
-- Analyzer: no issues
-- Widget tests: passing
-- Runtime smoke checks: completed on Chrome debug
+---
 
-## Roadmap
+# 🎯 Use Case
 
-- Invoice PDF generation and upload to Firebase Storage
-- Cloud Functions for scheduled recurring invoice generation
-- Extended charting and financial drill-downs
-- CI workflow for analyze + test + rules validation
+This application is useful for:
 
+- Small Business Owners
+- Shop Owners
+- Students Mini Project
+- GST Invoice Generation
+- Billing System Learning
+
+---
+
+# 📌 Future Improvements
+
+- PDF Bill Download
+- Customer Database
+- Product Database
+- GST Report Generation
+- Print Invoice
+- Cloud Storage
+
+---
+
+# 👨‍💻 Author
+
+**Krishna Nikam**  
+GitHub:  
+https://github.com/nikamkrishna055-coder
+
+---
+
+# 📜 License
+
+This project is created for **Educational Purpose / Mini Project**
+
+---
+
+# ⭐ Contribution
+
+Contributions are welcome!
+
+1. Fork Repository  
+2. Create Branch  
+3. Commit Changes  
+4. Push  
+5. Create Pull Request  
+
+---
+
+# ❤️ Support
+
+If you like this project, give it a ⭐ on GitHub.
