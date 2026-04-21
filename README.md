@@ -1,4 +1,4 @@
-# GST Billing SaaS App
+# GST Billing  App
 
 Smart GST billing and business operations app built with Flutter + Firebase.
 
