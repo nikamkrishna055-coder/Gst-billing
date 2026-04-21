@@ -216,12 +216,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
                                 const SizedBox(height: 12),
                                 Row(
                                   children: <Widget>[
-                                    Expanded(
+                                    Flexible(
+                                      flex: 1,
                                       child: DropdownButtonFormField<String>(
+                                        isExpanded: true,
                                         initialValue: status,
                                         decoration: const InputDecoration(
                                           labelText: 'Status',
                                           prefixIcon: Icon(Icons.flag_outlined),
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.symmetric(vertical: 12),
                                         ),
                                         items: const <DropdownMenuItem<String>>[
                                           DropdownMenuItem<String>(
@@ -247,14 +251,17 @@ class _RemindersScreenState extends State<RemindersScreen> {
                                         },
                                       ),
                                     ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
+                                    const SizedBox(width: 12),
+                                    Flexible(
+                                      flex: 1,
                                       child: DropdownButtonFormField<String>(
+                                        isExpanded: true,
                                         initialValue: type,
                                         decoration: const InputDecoration(
                                           labelText: 'Type',
-                                          prefixIcon:
-                                              Icon(Icons.category_outlined),
+                                          prefixIcon: Icon(Icons.category_outlined),
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.symmetric(vertical: 12),
                                         ),
                                         items: const <DropdownMenuItem<String>>[
                                           DropdownMenuItem<String>(
@@ -285,14 +292,18 @@ class _RemindersScreenState extends State<RemindersScreen> {
                                 const SizedBox(height: 12),
                                 Row(
                                   children: <Widget>[
-                                    Expanded(
+                                    Flexible(
+                                      flex: 1,
                                       child: DropdownButtonFormField<String>(
+                                        isExpanded: true,
                                         initialValue: priority,
                                         decoration: const InputDecoration(
                                           labelText: 'Priority',
                                           prefixIcon: Icon(
                                             Icons.priority_high_outlined,
                                           ),
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.symmetric(vertical: 12),
                                         ),
                                         items: const <DropdownMenuItem<String>>[
                                           DropdownMenuItem<String>(
@@ -318,14 +329,17 @@ class _RemindersScreenState extends State<RemindersScreen> {
                                         },
                                       ),
                                     ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
+                                    const SizedBox(width: 12),
+                                    Flexible(
+                                      flex: 1,
                                       child: DropdownButtonFormField<String>(
+                                        isExpanded: true,
                                         initialValue: channel,
                                         decoration: const InputDecoration(
                                           labelText: 'Channel',
-                                          prefixIcon:
-                                              Icon(Icons.campaign_outlined),
+                                          prefixIcon: Icon(Icons.campaign_outlined),
+                                          isDense: true,
+                                          contentPadding: EdgeInsets.symmetric(vertical: 12),
                                         ),
                                         items: const <DropdownMenuItem<String>>[
                                           DropdownMenuItem<String>(
