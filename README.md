@@ -1,35 +1,84 @@
-# 🧾 GST Billing Application
+## 📚 Group 3 - SE-B Mini Project
 
-A simple and efficient **GST Billing Application** built using **Flutter**.  
-This application helps users generate GST bills, calculate tax automatically, and manage billing details in an easy and user‑friendly interface.
-
----
-
-# 🚀 Features
-
-- Generate GST Bills
-- Automatic GST Calculation
-- Add Customer Details
-- Add Product Details
-- Calculate Total Amount
-- Clean User Interface
-- Cross‑Platform Support (Android / Windows / Web)
+### 📈 GST Billing & Financial Management Application
+# 🧾 Smart Tax Invoice Manager  
+A modern and efficient **GST Billing Application** developed using **Flutter and Firebase**.  
+This application helps users manage clients, generate invoices, calculate GST automatically, and track payments in a simple and organized way.
 
 ---
 
-# 🛠️ Tech Stack
+## 📋 Project Overview
 
-- Flutter
-- Dart
-- Material UI
-- SQLite / Local Storage
-- Android Studio / VS Code
+The **Smart Tax Invoice Manager** is designed to solve real-world billing problems faced by small and medium businesses.  
+Traditional billing methods are time-consuming and error-prone. This application automates GST calculations, invoice generation, and financial tracking, improving accuracy and productivity.
 
 ---
 
-# 📁 Project Structure
+## ✨ Core Features
 
-```
+### 📄 Billing & Invoice System
+- Create and manage GST invoices  
+- Automatic total calculation  
+- Invoice status tracking (Paid / Unpaid)  
+
+### 🧮 GST Calculation Engine
+- Automatic CGST, SGST, IGST calculation  
+- Fast and accurate tax computation  
+- Dedicated GST billing mode  
+
+### 👥 Client Management
+- Add, update, and delete client details  
+- Maintain complete customer records  
+- Easy access to transaction history  
+
+### 💼 Multi-Business Support
+- Manage multiple business profiles  
+- Easy switching between businesses  
+
+### 💰 Payment & Reminder System
+- Track payments and pending invoices  
+- Set reminders for due dates  
+
+### 📊 Dashboard & Reports
+- View financial summaries  
+- Analyze business performance  
+- Track recent transactions  
+
+### 🧠 Built-in Calculator
+- Normal calculator  
+- GST calculation mode  
+
+---
+
+## 🏗️ System Architecture
+
+The application follows a **mobile-based client-server architecture**:
+
+- **Frontend:** Flutter Mobile Application  
+- **Backend:** Firebase (Database & Services)  
+- **Logic Layer:** Dart (GST calculations, invoice processing)  
+
+---
+
+## 🛠️ Tech Stack
+
+### 🎨 Frontend
+- Flutter  
+- Dart  
+- Material UI  
+
+### ☁️ Backend
+- Firebase Firestore  
+- Firebase Authentication (optional)  
+
+### ⚙️ Tools
+- VS Code / Android Studio  
+- Git & GitHub  
+
+---
+
+## 📁 Project Structure
+
 Gst-billing/
 │
 ├── lib/
@@ -47,79 +96,79 @@ Gst-billing/
 │
 ├── pubspec.yaml
 ├── README.md
-```
 
 ---
 
-# ⚙️ Installation & Setup
+## ⚙️ Installation & Setup
 
-### 1. Clone Repository
+### 1️⃣ Clone Repository
+git clone https://github.com/nikamkrishna055-coder/Gst-billing.git  
+cd Gst-billing  
 
-```bash
-git clone https://github.com/nikamkrishna055-coder/Gst-billing.git
-```
+### 2️⃣ Install Dependencies
+flutter pub get  
 
-### 2. Go to Project Folder
-
-```bash
-cd Gst-billing
-```
-
-### 3. Install Dependencies
-
-```bash
-flutter pub get
-```
-
-### 4. Run Application
-
-```bash
-flutter run
-```
+### 3️⃣ Run Application
+flutter run  
 
 ---
 
-# 📱 Screenshots
+## 📱 Application Modules
 
-(Add screenshots here if available)
-
----
-
-# 🎯 Use Case
-
-This application is useful for:
-
-- Small Business Owners
-- Shop Owners
-- Students Mini Project
-- GST Invoice Generation
-- Billing System Learning
+- Business Profile Management  
+- Client Management  
+- Invoice Management  
+- GST Calculation Module  
+- Payment Tracking & Reminder System  
+- Dashboard & Reports  
+- Calculator Module  
 
 ---
 
-# 📌 Future Improvements
+## 📈 Project Outcomes
 
-- PDF Bill Download
-- Customer Database
-- Product Database
-- GST Report Generation
-- Print Invoice
-- Cloud Storage
+- Accurate GST-based invoice generation  
+- Efficient client and payment management  
+- Easy tracking of financial records  
+- Improved billing speed and accuracy  
+
+
+
+## 👨‍💻 Team Members
+
+- Yash Ballal  
+- Swarup Katke  
+- Krishna Nikam  
+- Rohan Shelar  
 
 ---
 
-# 👨‍💻 Author
+## 🎓 Academic Information
 
-**Krishna Nikam**  
-GitHub:  
-https://github.com/nikamkrishna055-coder
+- Course: Second Year Engineering (CSE - Data Science)  
+- University: University of Mumbai  
+- Institute: A. P. Shah Institute of Technology  
+- Guide: Prof. Kiran Gaikwad  
+- Year: 2025–26  
 
 ---
 
-# 📜 License
+## 📚 References
 
-This project is created for **Educational Purpose / Mini Project**
+- https://flutter.dev/docs  
+- https://firebase.google.com/docs  
+- https://www.gst.gov.in/  
+- https://cbic-gst.gov.in/  
+- https://dart.dev  
 
-# ❤️ Support
+---
 
-If you like this project, give it a ⭐ on GitHub.
+## 📜 License
+
+This project is developed for **Educational / Mini Project Purpose**
+
+---
+
+## ⭐ Support
+
+If you like this project, give it a ⭐ on GitHub!
